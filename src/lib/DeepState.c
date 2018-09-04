@@ -570,7 +570,7 @@ bool DeepState_CatchAbandoned(void) {
 extern size_t LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize,
 				      unsigned int Seed) {
   return LLVMFuzzerMutate(Data, Size, MaxSize);  
-  if (Seed % 2) == 0 {
+  if ((Seed % 2) == 0) {
       return LLVMFuzzerMutate(Data, Size, MaxSize);
   } else {
     DeepState_TrackExecution = 1;
