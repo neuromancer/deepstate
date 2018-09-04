@@ -76,6 +76,15 @@ extern volatile uint8_t DeepState_Input[DeepState_InputSize];
  * been consumed. */
 extern uint32_t DeepState_InputIndex;
 
+/* Controls whether execution of a test case is tracked, so the structure can be
+   used in, e.g., libFuzzer mutation */
+extern uint8_t DeepState_TrackExecution;
+
+extern uint32_t ExecutionTrace[DeepState_InputSize];
+extern size_t TraceSize;
+extern uint32_t ByteStack[DeepState_InputSize];
+extern size_t ByteStackPos;
+
 /* Return a symbolic value of a given type. */
 extern int DeepState_Bool(void);
 extern size_t DeepState_Size(void);

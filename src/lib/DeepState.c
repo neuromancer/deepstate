@@ -48,6 +48,13 @@ static struct DeepState_TestInfo *DeepState_DrFuzzTest = NULL;
 volatile uint8_t DeepState_Input[DeepState_InputSize] = {};
 uint32_t DeepState_InputIndex = 0;
 
+uint8_t DeepState_TrackExecution = 0;
+
+uint32_t ExecutionTrace[DeepState_InputSize] = {};
+size_t TraceSize = 0;
+uint32_t ByteStack[DeepState_InputSize] = {};
+size_t ByteStackPos = 0;
+
 /* Jump buffer for returning to `DeepState_Run`. */
 jmp_buf DeepState_ReturnToRun = {};
 
@@ -558,6 +565,13 @@ bool DeepState_CatchFail(void) {
 /* Returns `true` if the current test case was abandoned. */
 bool DeepState_CatchAbandoned(void) {
   return DeepState_CurrentTestRun->result == DeepState_TestRunAbandon;
+}
+
+extern int LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize,
+				   unsigned int Seed) {
+  DeepState_TrackExecution = 1;
+  int val = LLVMFuzzerTestOneInput(Data, Size);
+  DeepState_TrackExecution = 0;  
 }
 
 extern int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
