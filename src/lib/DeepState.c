@@ -567,11 +567,16 @@ bool DeepState_CatchAbandoned(void) {
   return DeepState_CurrentTestRun->result == DeepState_TestRunAbandon;
 }
 
-extern int LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize,
-				   unsigned int Seed) {
-  DeepState_TrackExecution = 1;
-  int val = LLVMFuzzerTestOneInput(Data, Size);
-  DeepState_TrackExecution = 0;  
+extern size_t LLVMFuzzerCustomMutator(uint8_t *Data, size_t Size, size_t MaxSize,
+				      unsigned int Seed) {
+  if (Seed % 2) == 0 {
+      return LLVMFuzzerMutate(Data, Size, MaxSize);
+  } else {
+    DeepState_TrackExecution = 1;
+    int val = LLVMFuzzerTestOneInput(Data, Size);
+    DeepState_TrackExecution = 0;
+  }
+  return Size;
 }
 
 extern int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
